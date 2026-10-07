@@ -1,0 +1,1 @@
+{"name":"testagram-mail-service","private":true,"type":"module","engines":{"node":">=20"},"scripts":{"build":"tsc -p tsconfig.json","typecheck":"tsc -p tsconfig.json --noEmit","start":"node dist/index.js","worker":"node dist/worker.js"},"dependencies":{},"devDependencies":{"@types/node":"^22.0.0","typescript":"^5.9.3"}}

@@ -40,9 +40,7 @@
     "test:e2e": "vitest run e2e",
     "test:record": "rimraf --glob \"**/__recordings__\" && cross-env TEST_MODE=record vitest run --exclude e2e",
     "test:watch": "vitest --exclude e2e",
-    "typecheck": "tsc --noEmit",
-    "build:mail": "tsdown server/mail-server.ts --format esm",
-    "typecheck:mail": "tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck server/mail-server.ts server/smtp-transport.ts"
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

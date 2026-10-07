@@ -42,8 +42,7 @@
     "test:watch": "vitest --exclude e2e",
     "typecheck": "tsc --noEmit",
     "build:mail": "tsdown server/mail-server.ts --format esm",
-    "typecheck:mail": "tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck server/mail-server.ts server/smtp-transport.ts",
-    "test:mail": "node --input-type=module -e \"import('./dist/server/mail-server.js').catch(()=>process.exit(0))\""
+    "typecheck:mail": "tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck server/mail-server.ts server/smtp-transport.ts"
   },
   "repository": {
     "type": "git",

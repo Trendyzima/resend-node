@@ -1,0 +1,21 @@
+[Unit]
+Description=Testagram Mail Delivery Worker
+After=network.target postfix.service testagram-mail.service
+
+[Service]
+Type=simple
+User=testagram-mail
+Group=testagram-mail
+WorkingDirectory=/opt/testagram-mail
+EnvironmentFile=/etc/testagram-mail.env
+ExecStart=/usr/bin/node /opt/testagram-mail/server/dist/worker.js
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/testagram-mail
+
+[Install]
+WantedBy=multi-user.target

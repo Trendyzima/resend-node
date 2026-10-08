@@ -26,3 +26,5 @@ jobs:
       - run: pnpm exec tsc -p server/tsconfig.json
       - run: node --check server/dist/index.js
       - run: node --check server/dist/worker.js
+
+# CI gate: source build only; production cutover requires separate deployment gates.

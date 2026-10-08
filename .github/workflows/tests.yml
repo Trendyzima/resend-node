@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - canary
+      - feature/testagram-owned-mail-service
   pull_request:
 permissions: 
   contents: read
@@ -26,6 +27,8 @@ jobs:
         run: pnpm install
       - name: Run build
         run: pnpm build
+      - name: Check Testagram Mail service
+        run: node --check server/mail-server.mjs
       - name: Run Tests
         run: pnpm test
         env:

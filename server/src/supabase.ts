@@ -11,4 +11,4 @@ export async function claimNext():Promise<MailRecord|null>{
 }
 async function patch(id:string,value:Record<string,unknown>){const r=await fetch(endpoint()+"?id=eq."+encodeURIComponent(id),{method:"PATCH",headers:h(),body:JSON.stringify(value)});if(!r.ok)throw new Error("MAIL_DB_PATCH_"+r.status);}
 export const markSent=(id:string)=>patch(id,{status:"sent",sent_at:new Date().toISOString(),last_error:null});
-export const markFailed=(id:string,error:string,retry:boolean)=>patch(id,{status:retry?"queued":"failed",last_error:error.slice(0,2000)});
+export async function markFailed(id:string,error:string,retry:boolean){const r=await fetch(config.supabaseUrl+"/rest/v1/rpc/mail_messages_retry",{method:"POST",headers:h(),body:JSON.stringify({p_id:id,p_error:error,p_retry:retry})});if(!r.ok)throw new Error("MAIL_RETRY_"+r.status);}

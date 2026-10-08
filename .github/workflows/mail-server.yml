@@ -1,0 +1,26 @@
+name: Testagram First-Party Mail
+on:
+  pull_request:
+    paths:
+      - 'mail-server/**'
+      - '.github/workflows/mail-server.yml'
+  push:
+    branches: [canary, main]
+    paths:
+      - 'mail-server/**'
+      - '.github/workflows/mail-server.yml'
+permissions:
+  contents: read
+jobs:
+  mail-server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mail-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --check server.mjs
+      - run: node --test server.test.mjs

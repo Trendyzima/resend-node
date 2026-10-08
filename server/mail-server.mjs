@@ -18,7 +18,6 @@ const MAX_ATTEMPTS = 8;
 
 if (!API_KEY) throw new Error('MAIL_API_KEY is required');
 
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const safeHeader = (v) => typeof v === 'string' && !/[\r\n]/.test(v);
 const email = (v) => typeof v === 'string' && v.length <= 320 && /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(v);
 const idempotency = (v) => typeof v === 'string' && /^[A-Za-z0-9._:-]{1,128}$/.test(v);
@@ -59,16 +58,16 @@ function mime(job) {
     'Date: '+new Date(job.createdAt).toUTCString(),
     'Message-ID: <'+job.id+'@'+HELO_NAME+'>','MIME-Version: 1.0',
     'Content-Type: multipart/alternative; boundary="'+boundary+'"',
-  ].join('\\r\\n');
-  const text=String(job.text || '').replace(/\r?\n/g,'\\r\\n');
-  const html=String(job.html || '').replace(/\r?\n/g,'\\r\\n');
+  ].join('\r\n');
+  const text=String(job.text || '').replace(/\r?\n/g,'\r\n');
+  const html=String(job.html || '').replace(/\r?\n/g,'\r\n');
   return headers+'\\r\\n\\r\\n--'+boundary+'\\r\\nContent-Type: text/plain; charset=UTF-8\\r\\nContent-Transfer-Encoding: 8bit\\r\\n\\r\\n'+text+'\\r\\n--'+boundary+'\\r\\nContent-Type: text/html; charset=UTF-8\\r\\nContent-Transfer-Encoding: 8bit\\r\\n\\r\\n'+html+'\\r\\n--'+boundary+'--\\r\\n';
 }
 function smtp(host, job) {
   return new Promise((resolve,reject)=>{
     let socket; let secure=false; let buffer=''; let stage=0; let closed=false;
     const fail=e=>{if(!closed){closed=true;socket?.destroy();reject(e)}};
-    const send=s=>socket.write(s+'\\r\\n');
+    const send=s=>socket.write(s+'\r\n');
     const next=(code,text)=>{
       if(stage===0){ if(code!==220) return fail(new Error('SMTP_GREETING_'+code)); send('EHLO '+HELO_NAME); stage=1; return; }
       if(stage===1){ if(code!==250) return fail(new Error('SMTP_EHLO_'+code)); if(text.includes('STARTTLS')) {send('STARTTLS'); stage=2;} else if(process.env.ALLOW_PLAINTEXT_SMTP==='true'){send('MAIL FROM:<'+job.from+'>'); stage=4;} else fail(new Error('SMTP_STARTTLS_REQUIRED')); return; }

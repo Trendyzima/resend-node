@@ -1,2 +1,2 @@
-export type EmailRequest={from?:string;to:string|string[];subject:string;html?:string;text?:string;reply_to?:string;headers?:Record<string,string>;idempotency_key?:string};
-export type QueuedMessage=EmailRequest&{id:string;created_at:string;attempts:number;status:"queued"|"sending"|"sent"|"failed"};
+export type EmailRequest={from?:string;to:string|string[];cc?:string|string[];bcc?:string|string[];subject:string;html?:string;text?:string;reply_to?:string|string[];headers?:Record<string,string>;idempotency_key?:string};
+export type QueuedMessage=EmailRequest&{id:string;created_at:string;attempts:number;status:"queued"|"sending"|"retry"|"sent"|"failed"};

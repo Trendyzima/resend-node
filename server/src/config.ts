@@ -2,7 +2,7 @@ function required(name:string){const v=process.env[name]?.trim();if(!v)throw new
 export const config={
  host:process.env.MAIL_HOST??"127.0.0.1", port:Number(process.env.MAIL_PORT??8787),
  apiKey:required("MAIL_API_KEY"),
- supabaseUrl:required("SUPABASE_URL").replace(/\\/$/,""),
+ supabaseUrl:required("SUPABASE_URL").replace(/\/$/,""),
  supabaseServiceKey:required("SUPABASE_SERVICE_KEY"),
  heloName:process.env.MAIL_HELO_NAME??"mail.testagram.site",
  mailDomain:process.env.MAIL_DOMAIN??"testagram.site",

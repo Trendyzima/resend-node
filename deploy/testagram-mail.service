@@ -1,6 +1,7 @@
 [Unit]
-Description=Testagram Mail API
-After=network.target postfix.service
+Description=Testagram first-party mail service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
@@ -10,12 +11,15 @@ WorkingDirectory=/opt/testagram-mail
 EnvironmentFile=/etc/testagram-mail.env
 ExecStart=/usr/bin/node /opt/testagram-mail/server/dist/index.js
 Restart=always
-RestartSec=2
+RestartSec=3
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/var/lib/testagram-mail
+MemoryMax=512M
+CPUQuota=100%
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+name: Testagram Mail Service CI
+on:
+  pull_request:
+    branches: [canary, main]
+    paths: ['server/**','.github/workflows/mail-service-ci.yml']
+  push:
+    branches: [feature/testagram-mail-service, canary]
+    paths: ['server/**','.github/workflows/mail-service-ci.yml']
+permissions:
+  contents: read
+jobs:
+  mail-service:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.27.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc -p server/tsconfig.json --noEmit
+      - run: pnpm exec tsc -p server/tsconfig.json
+      - run: node --check server/dist/index.js
+      - run: node --check server/dist/worker.js

@@ -139,19 +139,19 @@ function messageBody(mail: MailRecord) {
   const boundary = "=_Testagram_" + randomUUID().replaceAll("-", "");
   return [
     "MIME-Version: 1.0",
-    \`Content-Type: multipart/alternative; boundary="\${boundary}"\`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
     "",
-    \`--\${boundary}\`,
+    `--${boundary}`,
     "Content-Type: text/plain; charset=UTF-8",
     "Content-Transfer-Encoding: 8bit",
     "",
     mail.text_body ?? "",
-    \`--\${boundary}\`,
+    `--${boundary}`,
     "Content-Type: text/html; charset=UTF-8",
     "Content-Transfer-Encoding: 8bit",
     "",
     mail.html_body,
-    \`--\${boundary}--\`,
+    `--${boundary}--`,
   ].join("\r\n");
 }
 
@@ -169,7 +169,7 @@ function dkimHeader(
     body.replace(/\r?\n/g, "\r\n").replace(/(?:\r\n)*$/, "") + "\r\n";
   const bodyHash = createHash("sha256").update(canonicalBody).digest("base64");
   const value =
-    \`v=1; a=rsa-sha256; c=relaxed/simple; d=\${config.mailDomain}; s=\${config.dkimSelector}; h=from:to:subject:date:message-id; bh=\${bodyHash}; b=\`;
+    `v=1; a=rsa-sha256; c=relaxed/simple; d=${config.mailDomain}; s=${config.dkimSelector}; h=from:to:subject:date:message-id; bh=${bodyHash}; b=`;
 
   const canonicalHeaders = [
     ["from", from],

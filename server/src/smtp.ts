@@ -127,12 +127,12 @@ async function startTls(socket: net.Socket) {
 }
 
 function messageBody(mail: MailRecord) {
-  if (!mail.html_body) {
+  if (!mail.html) {
     return [
       "Content-Type: text/plain; charset=UTF-8",
       "Content-Transfer-Encoding: 8bit",
       "",
-      mail.text_body ?? "",
+      mail.text ?? "",
     ].join("\r\n");
   }
 
@@ -145,12 +145,12 @@ function messageBody(mail: MailRecord) {
     "Content-Type: text/plain; charset=UTF-8",
     "Content-Transfer-Encoding: 8bit",
     "",
-    mail.text_body ?? "",
+    mail.text ?? "",
     `--${boundary}`,
     "Content-Type: text/html; charset=UTF-8",
     "Content-Transfer-Encoding: 8bit",
     "",
-    mail.html_body,
+    mail.html,
     `--${boundary}--`,
   ].join("\r\n");
 }
@@ -186,7 +186,7 @@ function dkimHeader(
   return "DKIM-Signature: " + value + signer.sign(config.dkimPrivateKey, "base64");
 }
 
-export async function deliver(mail: MailRecord) {
+export async function deliver(mail: MailRecord): Promise<string> {
   const from = addr(mail.from_address);
   const groups = new Map<string, string[]>();
 
@@ -238,7 +238,7 @@ export async function deliver(mail: MailRecord) {
           "Date: " + date,
           "Message-ID: " + messageId,
           "MIME-Version: 1.0",
-          mail.reply_to ? "Reply-To: " + clean(mail.reply_to) : null,
+          mail.reply_to_addresses?.[0] ? "Reply-To: " + clean(mail.reply_to_addresses?.[0]) : null,
           dkimHeader(mail, body, mail.from_address, toHeader, date, messageId),
           "X-Mailer: Testagram Mail/1.0",
         ]
@@ -259,6 +259,7 @@ export async function deliver(mail: MailRecord) {
         await command(socket, "QUIT", [221, 250]);
         socket.destroy();
         delivered = true;
+        return messageId;
         break;
       } catch (error) {
         lastError = error instanceof Error ? error.message : String(error);
@@ -268,4 +269,5 @@ export async function deliver(mail: MailRecord) {
 
     if (!delivered) throw new Error(lastError);
   }
+  return "<" + randomUUID() + "@" + config.mailDomain + ">";
 }

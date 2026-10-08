@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - canary
+      - feature/testagram-owned-mail-service
   pull_request:
 permissions: 
   contents: read

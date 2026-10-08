@@ -1,7 +1,0 @@
-import {mkdir,readFile,writeFile,readdir,rename,unlink} from "node:fs/promises";import {join} from "node:path";import {randomUUID} from "node:crypto";import type {QueuedMessage} from "./types.js";import {config} from "./config.js";
-const pending=()=>join(config.queueDir,"pending"),done=()=>join(config.queueDir,"done"),failed=()=>join(config.queueDir,"failed");
-export async function initQueue(){await Promise.all([mkdir(pending(),{recursive:true}),mkdir(done(),{recursive:true}),mkdir(failed(),{recursive:true})]);}
-export async function enqueue(input:Omit<QueuedMessage,"id"|"created_at"|"attempts"|"status">,key?:string){await initQueue();const id=key?.replace(/[^a-zA-Z0-9._-]/g,"_")||randomUUID();const msg:QueuedMessage={...input,id,created_at:new Date().toISOString(),attempts:0,status:"queued"};await writeFile(join(pending(),id+".json"),JSON.stringify(msg),"utf8");return msg;}
-export async function listPending(){await initQueue();return (await readdir(pending())).filter(x=>x.endsWith(".json"));}
-export async function claim(file:string){const src=join(pending(),file),dst=join(pending(),".sending-"+file);try{await rename(src,dst);return dst}catch{return null}}
-export async function finish(path:string,msg:QueuedMessage,ok:boolean){msg.status=ok?"sent":"failed";const target=ok?done():failed();await writeFile(join(target,msg.id+".json"),JSON.stringify(msg),"utf8");await unlink(path).catch(()=>{});}
